@@ -1,0 +1,11 @@
+#/bin/sh
+
+# Install gcloud
+./google-cloud-sdk/install.sh --quiet
+
+# Install kubectl
+./google-cloud-sdk/bin/gcloud components install kubectl
+
+# Clean up
+rm -rf ./google-cloud-sdk/.install
+

@@ -2,7 +2,6 @@ version: '2'
 services:
   web:
     build: .
-    # command: make
     command: go test
     working_dir: /go/src/github.com/yebo-ecommerce/drone-gke
     volumes:
