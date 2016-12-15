@@ -1,0 +1,9 @@
+version: '2'
+services:
+  app:
+    image: golang
+    # command: make
+    command: go test
+    working_dir: /go/src/github.com/yebo-ecommerce/drone-gcr
+    volumes:
+      - ./:/go/src/github.com/yebo-ecommerce/drone-gcr

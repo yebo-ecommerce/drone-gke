@@ -1,0 +1,5 @@
+version: '2'
+services:
+  app:
+    image: yurifl/dorne-gcr
+    build: .
