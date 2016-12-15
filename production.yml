@@ -1,5 +1,5 @@
 version: '2'
 services:
-  app:
-    image: yurifl/dorne-gcr
+  web:
+    image: yurifl/drone-gcr
     build: .
