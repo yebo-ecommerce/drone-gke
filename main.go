@@ -1,51 +1,65 @@
 package main
 
+// Dependencies
 import (
-  "bytes"
-  "encoding/json"
-  "net/http"
-  "os"
+	"os"
+	"fmt"
 
-  "github.com/drone/drone-plugin-go/plugin"
+	"github.com/urfave/cli"
 )
 
+// Entrypoint
 func main() {
-  var repo = plugin.Repo{}
-  var build = plugin.Build{}
-  var vargs = struct {
-    Urls []string `json:"urls"`
-  }{}
+	// Create a new APP
+	app := cli.NewApp()
 
-  plugin.Param("repo", &repo)
-  plugin.Param("build", &build)
-  plugin.Param("vargs", &vargs)
-  plugin.Parse()
+	// App informations
+	app.Name = "Drone Google Cloud Container Engine plugin"
+	app.Version = "0.0.0-beta"
 
-  // data structure
-  data := struct {
-    Repo  plugin.Repo  `json:"repo"`
-    Build plugin.Build `json:"build"`
-  }{repo, build}
+	// Define its action
+	app.Action = run
 
-  // json payload that will be posted
-  payload, err := json.Marshal(&data)
-  if err != nil {
-    os.Exit(1)
-  }
+	// Flags
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:   "gcloud.credentials",
+			Usage:  "Google Cloud JSON token file",
+			EnvVar: "GOOGLE_CREDENTIALS,PLUGIN_CRENDENTIALS",
+		},
+		cli.StringFlag{
+			Name:   "gcloud.zone",
+			Usage:  "Google Cloud Zone",
+			EnvVar: "PLUGIN_ZONE",
+		},
+		cli.StringFlag{
+			Name:   "gcloud.cluster",
+			Usage:  "Google Cloud Cluster",
+			EnvVar: "GOOGLE_CLUSTER,PLUGIN_CLUSTER",
+		},
+		cli.StringFlag{
+			Name:   "gcloud.project",
+			Usage:  "Google Cloud Project",
+			EnvVar: "GOOGLE_PROJECT,PLUGIN_PROJECT",
+		},
+		cli.StringFlag{
+			Name:   "kube.namespace",
+			Usage:  "Kubernetes Namespace",
+			EnvVar: "PLUGIN_NAMESPACE",
+		},
+	}
 
-  // post payload to each url
-  for _, url := range vargs.Urls {
-    resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
-    if err != nil {
-      os.Exit(1)
-    }
-    resp.Body.Close()
-  }
+	// Try to run the command
+	if err := app.Run(os.Args); err != nil {
+		fmt.Errorf("[ERROR] Invalid arguments.")
+	}
 }
 
-// Trace writes each command to standard error (preceded by a ‘$ ’) before it
-// is executed. Used for debugging your build.
-func trace(cmd *exec.Cmd) {
-  fmt.Println("$", strings.Join(cmd.Args, " "))
-}
+// Run the plugin
+func run(c *cli.Context) error {
+	//
+	fmt.Println("Great stuff is coming")
 
+	// Success!
+	return nil
+}
