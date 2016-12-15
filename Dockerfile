@@ -26,7 +26,7 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 # =============================================================================
 RUN apk add --update git
 
-COPY . /go/src/github.com/yebo-ecommerce/drone-gke
+COPY ./drone-gke /go/src/github.com/yebo-ecommerce/drone-gke
 
 WORKDIR /go/src/github.com/yebo-ecommerce/drone-gke
 

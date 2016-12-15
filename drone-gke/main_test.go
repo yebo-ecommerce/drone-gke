@@ -5,5 +5,5 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	Run("asd", "kubectl")
+	RunCmd("kubectl", "")
 }

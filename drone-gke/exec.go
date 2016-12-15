@@ -23,7 +23,7 @@ func NewEnviron(dir string, env []string, stdout, stderr io.Writer) *Environ {
 	}
 }
 
-func (e *Environ) Run(name string, arg ...string) error {
+func (e *Environ) RunCmd(name string, arg ...string) error {
 	cmd := exec.Command(name, arg...)
 	cmd.Dir = e.dir
 	cmd.Env = e.env
