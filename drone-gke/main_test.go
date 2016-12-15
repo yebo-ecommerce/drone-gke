@@ -1,10 +1,9 @@
 package main
 
-// Dependencies
 import (
-  "testing"
+    "testing"
 )
 
-func TestMain(m *testing.M) {
-	RunCmd("kubectl", "")
+func TestFoo(t *testing.T) {
+    t.Error(run())
 }
