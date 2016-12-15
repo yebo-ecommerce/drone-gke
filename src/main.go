@@ -58,7 +58,7 @@ func main() {
 // Run the plugin
 func run(c *cli.Context) error {
 	//
-	fmt.Println("Great stuff is coming")
+	fmt.Println("Great stuff is coming!!")
 
 	// Success!
 	return nil

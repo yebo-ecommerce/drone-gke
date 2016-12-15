@@ -33,8 +33,3 @@ WORKDIR /go/src/github.com/yebo-ecommerce/drone-gke
 RUN go get -d -v
 
 RUN go install -v
-
-# Add the Drone plugin
-ADD drone-gke /bin/
-
-ENTRYPOINT ["/bin/drone-gke"]
