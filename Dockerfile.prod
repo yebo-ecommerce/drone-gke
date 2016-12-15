@@ -1,4 +1,4 @@
-FROM goland
+FROM alpine
 
 # https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.zip
 ENV COMPACT_GOOGLE_CLOUD ./vendor/google-cloud-sdk.zip
