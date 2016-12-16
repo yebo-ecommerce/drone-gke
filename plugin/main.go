@@ -3,6 +3,7 @@ package plugin
 // Dependenciesw:w
 import (
 	"os/exec"
+	"io/ioutil"
 	"os"
 	"strings"
 	"fmt"
@@ -10,8 +11,12 @@ import (
 
 // Constants
 const (
+	// Binaries
 	gcloudCmd = "gcloud"
 	kubectlCmd = "kubectl"
+
+	// Paths
+	googleKeyJsonPath = "/tmp/google-key.json"
 )
 
 // Plugin type
@@ -34,11 +39,17 @@ type (
 		Google     Google
 		Kubernetes Kubernetes
 		DroneEnv   map[string]string
+		Debug      bool
 	}
 )
 
 //
 func (p *Plugin) Exec() error {
+	//
+	if p.ExecCommandAuth() != nil {
+		fmt.Println("error while executing")
+	}
+
 	// Auth command
 	cmd := commandAuth("hello.json")
 	traceCommand(cmd)
@@ -61,32 +72,35 @@ func (p *Plugin) Exec() error {
 	return nil
 }
 
-// Command that auths into the gCloud
-func commandAuth(keyPath string) *exec.Cmd {
-	return exec.Command(gcloudCmd, "auth", "activate-service-account", "--key-file", keyPath)
-}
+//
+func runCommand(cmd *exec.Cmd, debug bool) error {
+	// Check if it's in debug mode
+	if debug {
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	} else {
+		cmd.Stdout = ioutil.Discard
+		cmd.Stderr = ioutil.Discard
+	}
 
-// Command that will get the Google Container Cluster crendentials (Kubernetes)
-func commandGetClusterCredentials(cluster, zone, project string) *exec.Cmd {
-	return exec.Command(gcloudCmd, "container", "clusters", "get-credentials", cluster, "--zone", zone, "--project", project)
-}
-
-// Generate the cluster name ("gke_${project}_${zone}_${cluste-name}")
-func generateKubernetesClusterName(project, zone, cluster string) string {
-	return strings.Join([]string{"gke", project, zone, cluster}, "_")
-}
-
-// Set the Kubernetes context with namespace
-func commandSetKubernetesContext(cluster, namespace string) *exec.Cmd {
-	return exec.Command(kubectlCmd, "config", "set-context", cluster, "--namespace", namespace)
-}
-
-// Apply the file changes (or creation) to Kubernetes
-func commandKubernetesApply(file string) *exec.Cmd {
-	return exec.Command(kubectlCmd, "apply", "--filename", file)
+	// Run the command
+	return cmd.Run()
 }
 
 // Traces the command to the os.Stdout
 func traceCommand(cmd *exec.Cmd) {
 	fmt.Fprintf(os.Stdout, "$ %s\n", strings.Join(cmd.Args, " "))
+}
+
+// Create a temporary file
+func createTmpFile(path, content string, debug bool) {
+	// Create the file
+	if ioutil.WriteFile(path, []byte(content), 0600) != nil {
+		panic("error while creating tmp file")
+	}
+
+	// Debug?
+	if debug {
+		fmt.Println("Creating the temporary file:", path)
+	}
 }
