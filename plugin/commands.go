@@ -30,3 +30,9 @@ func commandSetKubernetesContext(cluster, namespace string) *exec.Cmd {
 func commandKubernetesApply(file string) *exec.Cmd {
 	return exec.Command(kubectlCmd, "apply", "--filename", file)
 }
+
+// Update the deployment image
+func commandKubernetesUpdateDeployment(name, project, tag string) {
+	// `kubectl set image deployment/demo demo=gcr.io/yebo-project/demo:latest`
+	return exec.Command(kubectlCmd, "set", "image", "deployment/" + name, "demo=gcr.io/" + project + "/" + name + ":" + tag)
+}

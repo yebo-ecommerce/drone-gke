@@ -34,11 +34,17 @@ type (
 		Namespace string
 	}
 
+	// Drone Values
+	Drone struct {
+		Tag  string
+		Name string
+	}
+
 	// Plugin execution params
 	Plugin struct {
 		Google     Google
 		Kubernetes Kubernetes
-		DroneEnv   map[string]string
+		Drone      Drone
 		Debug      bool
 	}
 )

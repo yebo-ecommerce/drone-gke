@@ -59,6 +59,16 @@ func main() {
 			Usage:  "Kubernetes Namespace",
 			EnvVar: "PLUGIN_NAMESPACE",
 		},
+		cli.StringFlag{
+			Name:   "drone.name",
+			Usage:  "Repository Name",
+			EnvVar: "DRONE_REPO_NAME",
+		},
+		cli.StringFlag{
+			Name:   "drone.tag",
+			Usage:  "Commit Tag",
+			EnvVar: "DRONE_TAG",
+		},
 	}
 
 	// Try to run the command
@@ -73,8 +83,11 @@ func run(c *cli.Context) error {
 	p := plugin.Plugin{
 		// Debug
 		Debug: c.Bool("debug"),
-		// Drone env
-		DroneEnv: parseDroneEnvs(),
+		// Drone stuff
+		Drone: plugin.Drone{
+			Tag: c.String("drone.tag"),
+			Name: c.String("drone.name"),
+		},
 		// Google configurations
 		Google: plugin.Google{
 			Credentials: c.String("gcloud.credentials"),
@@ -90,25 +103,4 @@ func run(c *cli.Context) error {
 
 	// Execute it
 	return p.Exec()
-}
-
-//
-func parseDroneEnvs() map[string]string {
-	// Create a new one
-	res := map[string]string{}
-
-	//
-	for _, e := range os.Environ() {
-		//
-		pair := strings.Split(e, "=")
-
-		// Check if it is a DRONE env var
-		if strings.HasPrefix(pair[0], "DRONE_") {
-			// Set it to the result
-			res[pair[0]] = pair[1]
-		}
-	}
-
-	//
-	return res
 }
