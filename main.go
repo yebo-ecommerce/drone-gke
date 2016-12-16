@@ -4,7 +4,9 @@ package main
 import (
 	"os"
 	"fmt"
+	"strings"
 
+	plugin "github.com/yebo-ecommerce/drone-gke/plugin"
 	"github.com/urfave/cli"
 )
 
@@ -33,14 +35,14 @@ func main() {
 			EnvVar: "PLUGIN_ZONE",
 		},
 		cli.StringFlag{
-			Name:   "gcloud.cluster",
-			Usage:  "Google Cloud Cluster",
-			EnvVar: "GOOGLE_CLUSTER,PLUGIN_CLUSTER",
-		},
-		cli.StringFlag{
 			Name:   "gcloud.project",
 			Usage:  "Google Cloud Project",
 			EnvVar: "GOOGLE_PROJECT,PLUGIN_PROJECT",
+		},
+		cli.StringFlag{
+			Name:   "kube.cluster",
+			Usage:  "Kubernetes Cluster name",
+			EnvVar: "KUBERNETES_CLUSTER,PLUGIN_CLUSTER",
 		},
 		cli.StringFlag{
 			Name:   "kube.namespace",
@@ -57,9 +59,44 @@ func main() {
 
 // Run the plugin
 func run(c *cli.Context) error {
-	//
-	fmt.Println("Great stuff is coming")
+	// Create the plugin
+	p := plugin.Plugin{
+		// Drone env
+		DroneEnv: parseDroneEnvs(),
+		// Google configurations
+		Google: plugin.Google{
+			Credentials: c.String("gcloud.credentials"),
+			Zone: c.String("gcloud.zone"),
+			Project: c.String("gcloud.project"),
+		},
+		// Kubernetes Configurations
+		Kubernetes: plugin.Kubernetes{
+			Cluster: c.String("kube.cluster"),
+			Namespace: c.String("kube.namespace"),
+		},
+	}
 
-	// Success!
-	return nil
+	// Execute it
+	return p.Exec()
+}
+
+//
+func parseDroneEnvs() map[string]string {
+	// Create a new one
+	res := map[string]string{}
+
+	//
+	for _, e := range os.Environ() {
+		//
+		pair := strings.Split(e, "=")
+
+		// Check if it is a DRONE env var
+		if strings.Contains(pair[0], "DRONE_") {
+			// Set it to the result
+			res[pair[0]] = pair[1]
+		}
+	}
+
+	//
+	return res
 }
