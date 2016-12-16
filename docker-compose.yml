@@ -5,4 +5,4 @@ services:
     command: go test -v ./
     working_dir: /go/src/github.com/yebo-ecommerce/drone-gke
     volumes:
-      - ./drone-gke:/go/src/github.com/yebo-ecommerce/drone-gke
+      - ./:/go/src/github.com/yebo-ecommerce/drone-gke
