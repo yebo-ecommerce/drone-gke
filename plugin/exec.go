@@ -55,7 +55,7 @@ func (p *Plugin) ExecSetNamespace() error {
 // Run the deployment update
 func (p *Plugin) ExecDeploymentUpdate() error {
 	//
-	cmd := commandKubernetesUpdateDeployment(p.Drone.Name, p.Google.Project, p.Drone.Tag)
+	cmd := commandKubernetesUpdateDeployment(p.Kubernetes.Deployment, p.Kubernetes.Container, p.Kubernetes.Image, p.Google.Project, p.Drone.Tag)
 
 	// Trace the bug
 	traceCommand(cmd)

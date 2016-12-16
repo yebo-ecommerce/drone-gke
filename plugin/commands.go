@@ -32,7 +32,9 @@ func commandKubernetesApply(file string) *exec.Cmd {
 }
 
 // Update the deployment image
-func commandKubernetesUpdateDeployment(name, project, tag string) *exec.Cmd {
+func commandKubernetesUpdateDeployment(deployment, container, image, project, tag string) *exec.Cmd {
+	// Alow this two options
 	// `kubectl set image deployment/demo demo=gcr.io/yebo-project/demo:latest`
-	return exec.Command(kubectlCmd, "set", "image", "deployment/" + name, name + "=gcr.io/" + project + "/" + name + ":" + tag)
+	// `kubectl set image deployment/develop develop=gcr.io/yebo-project/demo:latest`
+	return exec.Command(kubectlCmd, "set", "image", "deployment/" + deployment, container + "=gcr.io/" + project + "/" + image + ":" + tag)
 }

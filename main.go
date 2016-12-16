@@ -59,6 +59,21 @@ func main() {
 			EnvVar: "PLUGIN_NAMESPACE",
 		},
 		cli.StringFlag{
+			Name:   "kube.deployment",
+			Usage:  "Kubernetes Deployment",
+			EnvVar: "PLUGIN_DEPLOYMENT",
+		},
+		cli.StringFlag{
+			Name:   "kube.container",
+			Usage:  "Kubernetes Container",
+			EnvVar: "PLUGIN_CONTAINER",
+		},
+		cli.StringFlag{
+			Name:   "kube.image",
+			Usage:  "Kubernetes Image",
+			EnvVar: "PLUGIN_CONTAINER_IMAGE",
+		},
+		cli.StringFlag{
 			Name:   "drone.name",
 			Usage:  "Repository Name",
 			EnvVar: "DRONE_REPO_NAME",
@@ -98,11 +113,25 @@ func run(c *cli.Context) error {
 		Kubernetes: plugin.Kubernetes{
 			Cluster: c.String("kube.cluster"),
 			Namespace: c.String("kube.namespace"),
+			Container: c.String("kube.container"),
+			Deployment: c.String("kube.deployment"),
+			Image: c.String("kube.image"),
 		},
 	}
 	// Env to use old kubernetes behaviour
 	// https://github.com/kubernetes/kubernetes/issues/30617
 	os.Setenv("CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE", "True")
+
+	// Validate
+	if p.Kubernetes.Container == "" {
+		p.Kubernetes.Container = p.Drone.Name
+	}
+	if p.Kubernetes.Image == "" {
+		p.Kubernetes.Image = p.Drone.Name
+	}
+	if p.Kubernetes.Deployment == "" {
+		p.Kubernetes.Deployment = p.Drone.Name
+	}
 
 	// Execute it
 	return p.Exec()

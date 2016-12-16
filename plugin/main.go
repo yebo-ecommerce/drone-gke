@@ -30,8 +30,11 @@ type (
 
 	// Kubernetes stuff
 	Kubernetes struct {
-		Cluster   string
-		Namespace string
+		Cluster    string
+		Namespace  string
+		Deployment string
+		Container  string
+		Image      string
 	}
 
 	// Drone Values
