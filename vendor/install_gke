@@ -1,10 +1,15 @@
 #/bin/sh
 
+
+# Env to use old kubernetes behaviour
+# https://github.com/kubernetes/kubernetes/issues/30617
+export CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE=True
+
 # Install gcloud
 ./google-cloud-sdk/install.sh --quiet
 
 # Install kubectl
-./google-cloud-sdk/bin/gcloud components install kubectl
+./google-cloud-sdk/bin/gcloud components install kubectl alpha beta
 
 # Clean up
 rm -rf ./google-cloud-sdk/.install
