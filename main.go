@@ -91,7 +91,7 @@ func parseDroneEnvs() map[string]string {
 		pair := strings.Split(e, "=")
 
 		// Check if it is a DRONE env var
-		if strings.Contains(pair[0], "DRONE_") {
+		if strings.HasPrefix(pair[0], "DRONE_") {
 			// Set it to the result
 			res[pair[0]] = pair[1]
 		}
