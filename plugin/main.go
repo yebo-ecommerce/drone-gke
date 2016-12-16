@@ -76,11 +76,12 @@ func generateKubernetesClusterName(project, zone, cluster string) string {
 	return strings.Join([]string{"gke", project, zone, cluster}, "_")
 }
 
-//
+// Set the Kubernetes context with namespace
 func commandSetKubernetesContext(cluster, namespace string) *exec.Cmd {
 	return exec.Command(kubectlCmd, "config", "set-context", cluster, "--namespace", namespace)
 }
 
+// Apply the file changes (or creation) to Kubernetes
 func commandKubernetesApply(file string) *exec.Cmd {
 	return exec.Command(kubectlCmd, "apply", "--filename", file)
 }
