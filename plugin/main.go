@@ -89,7 +89,7 @@ func runCommand(cmd *exec.Cmd, debug bool) error {
 
 // Traces the command to the os.Stdout
 func traceCommand(cmd *exec.Cmd) {
-	fmt.Fprintf(os.Stdout, "$ %s\n", strings.Join(cmd.Args, " "))
+	fmt.Fprintf(os.Stdout, "+ %s\n", strings.Join(cmd.Args, " "))
 }
 
 // Create a temporary file

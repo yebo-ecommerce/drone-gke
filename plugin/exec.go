@@ -17,9 +17,7 @@ func (p *Plugin) ExecCommandAuth() error {
 	cmd := commandAuth(googleKeyJsonPath)
 
 	// Trace the bug
-	if p.Debug {
-		traceCommand(cmd)
-	}
+	traceCommand(cmd)
 
 	// Run the command
 	return runCommand(cmd, p.Debug)
@@ -31,9 +29,7 @@ func (p *Plugin) ExecGetCredentials() error {
 	cmd := commandGetClusterCredentials(p.Kubernetes.Cluster, p.Google.Zone, p.Google.Project)
 
 	// Trace the bug
-	if p.Debug {
-		traceCommand(cmd)
-	}
+	traceCommand(cmd)
 
 	return runCommand(cmd, p.Debug)
 }
@@ -46,9 +42,7 @@ func (p *Plugin) ExecSetNamespace() error {
 		cmd := commandSetKubernetesContext(generateKubernetesClusterName(p.Google.Project, p.Google.Zone, p.Kubernetes.Cluster), p.Kubernetes.Namespace)
 
 		// Trace the bug
-		if p.Debug {
-			traceCommand(cmd)
-		}
+		traceCommand(cmd)
 
 		// Run the command
 		return runCommand(cmd, p.Debug)
@@ -64,9 +58,7 @@ func (p *Plugin) ExecDeploymentUpdate() error {
 	cmd := commandKubernetesUpdateDeployment(p.Drone.Name, p.Google.Project, p.Drone.Tag)
 
 	// Trace the bug
-	if p.Debug {
-		traceCommand(cmd)
-	}
+	traceCommand(cmd)
 
 	// Run the command
 	return runCommand(cmd, p.Debug)
