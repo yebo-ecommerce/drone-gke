@@ -3,7 +3,7 @@ FROM golang:alpine
 # lest be shore where we working
 WORKDIR /
 
-RUN apk add --update python ca-certificates unzip
+RUN apk add --update python ca-certificates unzip git
 
 # https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.zip
 ENV COMPACT_GOOGLE_CLOUD ./vendor/google-cloud-sdk.zip
@@ -20,11 +20,13 @@ COPY vendor/install_gke /
 # Run it
 RUN ./install_gke
 
+# Add gcloud to PATH
 ENV PATH /google-cloud-sdk/bin:$PATH
 
-# RUN apk del unzip
+# Cleanup
+RUN apk del unzip
+
 # =============================================================================
-RUN apk add --update git
 
 COPY . /go/src/github.com/yebo-ecommerce/drone-gke
 

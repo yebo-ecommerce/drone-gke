@@ -1,1 +1,2 @@
- gcloud auth activate-service-account docker@yebo-project.iam.gserviceaccount.com --key-file=./secrets/yebo.json  --project=yebo-project
+ - gcloud auth activate-service-account docker@yebo-project.iam.gserviceaccount.com --key-file=./secrets/yebo.json  --project=yebo-project
+ - docker-compose run --rm web ./test.sh

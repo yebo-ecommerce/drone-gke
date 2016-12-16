@@ -31,7 +31,7 @@ func main() {
 		cli.StringFlag{
 			Name:   "gcloud.credentials",
 			Usage:  "Google Cloud JSON token file",
-			EnvVar: "GOOGLE_CREDENTIALS,PLUGIN_CRENDENTIALS",
+			EnvVar: "GOOGLE_CREDENTIALS,PLUGIN_CREDENTIALS",
 		},
 		cli.StringFlag{
 			Name:   "gcloud.zone",
@@ -67,6 +67,7 @@ func main() {
 			Name:   "drone.tag",
 			Usage:  "Commit Tag",
 			EnvVar: "DRONE_TAG",
+			Value:  "latest",
 		},
 	}
 
@@ -99,6 +100,9 @@ func run(c *cli.Context) error {
 			Namespace: c.String("kube.namespace"),
 		},
 	}
+	// Env to use old kubernetes behaviour
+	// https://github.com/kubernetes/kubernetes/issues/30617
+	os.Setenv("CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE", "True")
 
 	// Execute it
 	return p.Exec()
