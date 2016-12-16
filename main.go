@@ -4,7 +4,6 @@ package main
 import (
 	"os"
 	"fmt"
-	"strings"
 
 	plugin "github.com/yebo-ecommerce/drone-gke/plugin"
 	"github.com/urfave/cli"

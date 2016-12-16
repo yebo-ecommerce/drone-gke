@@ -51,28 +51,25 @@ type (
 
 //
 func (p *Plugin) Exec() error {
-	//
+	// Authenticate!
 	if p.ExecCommandAuth() != nil {
-		fmt.Println("error while executing")
+		return fmt.Errorf("[ERROR] Could not authenticate")
 	}
-
-	// Auth command
-	cmd := commandAuth("hello.json")
-	traceCommand(cmd)
 
 	// Get Credentials command
-	cmd = commandGetClusterCredentials(p.Kubernetes.Cluster, p.Google.Zone, p.Google.Project)
-	traceCommand(cmd)
-
-	// Set Kubernetes context
-	if p.Kubernetes.Cluster != "" {
-		cmd = commandSetKubernetesContext(generateKubernetesClusterName(p.Google.Project, p.Google.Zone, p.Kubernetes.Cluster), p.Kubernetes.Namespace)
-		traceCommand(cmd)
+	if p.ExecGetCredentials() != nil {
+		return fmt.Errorf("[ERROR] Could not get GKE credentials")
 	}
 
-	// Apply the changes from the file
-	cmd = commandKubernetesApply("somefile.yml")
-	traceCommand(cmd)
+	// Set namespace
+	if p.ExecSetNamespace() != nil {
+		return fmt.Errorf("[ERROR] Could not set the kubernetes namespace")
+	}
+
+	//
+	if p.ExecDeploymentUpdate() != nil {
+		return fmt.Errorf("[ERROR] Could not update the deployment")
+	}
 
 	// Everything OK
 	return nil
@@ -84,9 +81,6 @@ func runCommand(cmd *exec.Cmd, debug bool) error {
 	if debug {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-	} else {
-		cmd.Stdout = ioutil.Discard
-		cmd.Stderr = ioutil.Discard
 	}
 
 	// Run the command
