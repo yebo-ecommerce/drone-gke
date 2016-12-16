@@ -40,21 +40,21 @@ type (
 //
 func (p *Plugin) Exec() error {
 	// Auth command
-	cmd := commandAuth("hello.json")
+	cmd := p.commandAuth("hello.json")
 	traceCommand(cmd)
 
 	// Get Credentials command
-	cmd = commandGetClusterCredentials(p.Kubernetes.Cluster, p.Google.Zone, p.Google.Project)
+	cmd = p.commandGetClusterCredentials()
 	traceCommand(cmd)
 
 	// Set Kubernetes context
 	if p.Kubernetes.Cluster != "" {
-		cmd = commandSetKubernetesContext(generateKubernetesClusterName(p.Google.Project, p.Google.Zone, p.Kubernetes.Cluster), p.Kubernetes.Namespace)
+		cmd = p.commandSetKubernetesContext(p.generateKubernetesClusterName())
 		traceCommand(cmd)
 	}
 
 	// Apply the changes from the file
-	cmd = commandKubernetesApply("somefile.yml")
+	cmd = p.commandKubernetesApply("somefile.yml")
 	traceCommand(cmd)
 
 	// Everything OK
@@ -62,27 +62,27 @@ func (p *Plugin) Exec() error {
 }
 
 // Command that auths into the gCloud
-func commandAuth(keyPath string) *exec.Cmd {
+func (p *Plugin) commandAuth(keyPath string) *exec.Cmd {
 	return exec.Command(gcloudCmd, "auth", "activate-service-account", "--key-file", keyPath)
 }
 
 // Command that will get the Google Container Cluster crendentials (Kubernetes)
-func commandGetClusterCredentials(cluster, zone, project string) *exec.Cmd {
-	return exec.Command(gcloudCmd, "container", "clusters", "get-credentials", cluster, "--zone", zone, "--project", project)
+func (p *Plugin) commandGetClusterCredentials() *exec.Cmd {
+	return exec.Command(gcloudCmd, "container", "clusters", "get-credentials", p.Kubernetes.Cluster, "--zone", p.Google.Zone, "--project", p.Google.Project)
 }
 
 // Generate the cluster name ("gke_${project}_${zone}_${cluste-name}")
-func generateKubernetesClusterName(project, zone, cluster string) string {
-	return strings.Join([]string{"gke", project, zone, cluster}, "_")
+func (p *Plugin) generateKubernetesClusterName() string {
+	return strings.Join([]string{"gke", p.Google.Project, p.Google.Zone, p.Kubernetes.Cluster}, "_")
 }
 
 // Set the Kubernetes context with namespace
-func commandSetKubernetesContext(cluster, namespace string) *exec.Cmd {
-	return exec.Command(kubectlCmd, "config", "set-context", cluster, "--namespace", namespace)
+func (p *Plugin) commandSetKubernetesContext(cluster string) *exec.Cmd {
+	return exec.Command(kubectlCmd, "config", "set-context", cluster, "--namespace", p.Kubernetes.Namespace)
 }
 
 // Apply the file changes (or creation) to Kubernetes
-func commandKubernetesApply(file string) *exec.Cmd {
+func (p *Plugin) commandKubernetesApply(file string) *exec.Cmd {
 	return exec.Command(kubectlCmd, "apply", "--filename", file)
 }
 
