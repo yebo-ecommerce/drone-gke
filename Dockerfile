@@ -15,7 +15,7 @@ ADD $COMPACT_GOOGLE_CLOUD /tmp/google-cloud-sdk.zip
 RUN unzip /tmp/google-cloud-sdk.zip -d / && rm /tmp/google-cloud-sdk.zip
 
 # Copy shared gke install script
-COPY install_gke /
+COPY vendor/install_gke /
 
 # Run it
 RUN ./install_gke
