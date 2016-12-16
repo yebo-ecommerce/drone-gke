@@ -24,6 +24,11 @@ func main() {
 
 	// Flags
 	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:   "debug",
+			Usage:  "If the program is running in the Debug mode",
+			EnvVar: "PLUGIN_DEBUG",
+		},
 		cli.StringFlag{
 			Name:   "gcloud.credentials",
 			Usage:  "Google Cloud JSON token file",
@@ -61,6 +66,8 @@ func main() {
 func run(c *cli.Context) error {
 	// Create the plugin
 	p := plugin.Plugin{
+		// Debug
+		Debug: c.Bool("debug"),
 		// Drone env
 		DroneEnv: parseDroneEnvs(),
 		// Google configurations
