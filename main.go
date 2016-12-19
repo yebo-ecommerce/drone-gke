@@ -74,6 +74,11 @@ func main() {
 			EnvVar: "PLUGIN_CONTAINER_IMAGE",
 		},
 		cli.StringFlag{
+			Name:   "kube.file",
+			Usage:  "Kubernetes File content",
+			EnvVar: "KUBERNETES_FILE,PLUGIN_KUBEFILE",
+		},
+		cli.StringFlag{
 			Name:   "drone.name",
 			Usage:  "Repository Name",
 			EnvVar: "DRONE_REPO_NAME",
@@ -116,8 +121,10 @@ func run(c *cli.Context) error {
 			Container: c.String("kube.container"),
 			Deployment: c.String("kube.deployment"),
 			Image: c.String("kube.image"),
+			File: c.String("kube.file"),
 		},
 	}
+
 	// Env to use old kubernetes behaviour
 	// https://github.com/kubernetes/kubernetes/issues/30617
 	os.Setenv("CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE", "True")
@@ -126,9 +133,11 @@ func run(c *cli.Context) error {
 	if p.Kubernetes.Container == "" {
 		p.Kubernetes.Container = p.Drone.Name
 	}
+
 	if p.Kubernetes.Image == "" {
 		p.Kubernetes.Image = p.Drone.Name
 	}
+
 	if p.Kubernetes.Deployment == "" {
 		p.Kubernetes.Deployment = p.Drone.Name
 	}

@@ -17,6 +17,7 @@ const (
 
 	// Paths
 	googleKeyJsonPath = "/tmp/google-key.json"
+	kubeFilePath = "/tmp/gen-kube.yml"
 )
 
 // Plugin type
@@ -35,6 +36,7 @@ type (
 		Deployment string
 		Container  string
 		Image      string
+		File       string
 	}
 
 	// Drone Values
@@ -49,6 +51,17 @@ type (
 		Kubernetes Kubernetes
 		Drone      Drone
 		Debug      bool
+	}
+
+	// Information used in the templates
+	TemplateInfos struct {
+		Name       string
+		Tag        string
+		Namespace  string
+		Cluster    string
+		Container  string
+		Image      string
+		Deployment string
 	}
 )
 
@@ -69,9 +82,18 @@ func (p *Plugin) Exec() error {
 		return fmt.Errorf("[ERROR] Could not set the kubernetes namespace")
 	}
 
-	//
-	if p.ExecDeploymentUpdate() != nil {
-		return fmt.Errorf("[ERROR] Could not update the deployment")
+
+	// Check if there is any kubernetes file
+	if p.Kubernetes.File == "" {
+		//
+		if p.ExecDeploymentUpdate() != nil {
+			return fmt.Errorf("[ERROR] Could not update the deployment")
+		}
+	} else {
+		//
+		if p.ExecApplyKubernetes() != nil {
+			return fmt.Errorf("[ERROR] Could apply changes to the files")
+		}
 	}
 
 	// Everything OK
