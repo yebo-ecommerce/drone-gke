@@ -1,7 +1,7 @@
 version: '2'
 services:
   web:
-    image: yurifl/drone-gke
+    image: yebodev/drone-gke
     build:
       context: .
       dockerfile: Dockerfile.prod
