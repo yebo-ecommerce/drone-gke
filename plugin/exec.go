@@ -119,12 +119,6 @@ func (p *Plugin) ExecApplyKubernetes() error {
 		return fmt.Errorf("Error while generating the file: %s\n", err)
 	}
 
-	// Print the generated file
-	if p.Debug {
-		res, _ := ioutil.ReadFile(kFile)
-		fmt.Printf("%+v\n", string(res))
-	}
-
 	// Close and delete the file
 	defer f.Close()
 	defer os.Remove(kFile)
@@ -134,6 +128,12 @@ func (p *Plugin) ExecApplyKubernetes() error {
 
 	// Info
 	fmt.Println("[INFO] Updating files")
+
+	// Print the generated file
+	if p.Debug {
+		res, _ := ioutil.ReadFile(kFile)
+		fmt.Printf("%+v\n", string(res))
+	}
 
 	// Trace command
 	if p.Debug {
