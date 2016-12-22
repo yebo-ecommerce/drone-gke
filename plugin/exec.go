@@ -72,6 +72,9 @@ func (p *Plugin) ExecSetNamespace() error {
 
 // Apply changes to the configuration
 func (p *Plugin) ExecApplyKubernetes() error {
+	// Generate the kubernetes filename
+	kFile := kubeFilePath + "-" + p.Drone.BuildNumber + ".yml"
+
 	// Check if the passed is a file:
 	if _, err := os.Stat("./" + p.Kubernetes.File); err == nil {
 		// Read the file contents
@@ -87,26 +90,27 @@ func (p *Plugin) ExecApplyKubernetes() error {
 	}
 
 	// Parse using the template
-	tmpl, err := template.New(kubeFilePath).Option("missingkey=error").Parse(p.Kubernetes.File)
+	tmpl, err := template.New(kFile).Option("missingkey=error").Parse(p.Kubernetes.File)
 	if err != nil {
 		return fmt.Errorf("Error parsing the template %s\n", err)
 	}
 
 	// Create a file
-	f, err := os.Create(kubeFilePath)
+	f, err := os.Create(kFile)
 	if err != nil {
-		return fmt.Errorf("Error while creating the file %s\n", kubeFilePath)
+		return fmt.Errorf("Error while creating the file %s\n", kFile)
 	}
 
 	// Create the informations used by the templates
 	infos := TemplateInfos{
-		Name:       p.Drone.Name,
-		Tag:        p.Drone.Tag,
-		Namespace:  p.Kubernetes.Namespace,
-		Cluster:    p.Kubernetes.Cluster,
-		Container:  p.Kubernetes.Container,
-		Image:      p.Kubernetes.Image,
-		Deployment: p.Kubernetes.Deployment,
+		Name:        p.Drone.Name,
+		Tag:         p.Drone.Tag,
+		BuildNumber: p.Drone.BuildNumber,
+		Namespace:   p.Kubernetes.Namespace,
+		Cluster:     p.Kubernetes.Cluster,
+		Container:   p.Kubernetes.Container,
+		Image:       p.Kubernetes.Image,
+		Deployment:  p.Kubernetes.Deployment,
 	}
 
 	// Run the template
@@ -115,12 +119,18 @@ func (p *Plugin) ExecApplyKubernetes() error {
 		return fmt.Errorf("Error while generating the file: %s\n", err)
 	}
 
+	// Print the generated file
+	if p.Debug {
+		res, _ := ioutil.ReadFile(kFile)
+		fmt.Printf("%+v\n", string(res))
+	}
+
 	// Close and delete the file
 	defer f.Close()
-	defer os.Remove(kubeFilePath)
+	defer os.Remove(kFile)
 
 	// Generate the command
-	cmd := commandKubernetesApply(kubeFilePath)
+	cmd := commandKubernetesApply(kFile)
 
 	// Info
 	fmt.Println("[INFO] Updating files")

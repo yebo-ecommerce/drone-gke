@@ -89,6 +89,11 @@ func main() {
 			EnvVar: "DRONE_TAG",
 			Value:  "latest",
 		},
+		cli.StringFlag{
+			Name:   "drone.number",
+			Usage:  "Drone build number",
+			EnvVar: "DRONE_BUILD_NUMBER",
+		},
 	}
 
 	// Try to run the command
@@ -107,6 +112,7 @@ func run(c *cli.Context) error {
 		Drone: plugin.Drone{
 			Tag: c.String("drone.tag"),
 			Name: c.String("drone.name"),
+			BuildNumber: c.String("drone.number"),
 		},
 		// Google configurations
 		Google: plugin.Google{

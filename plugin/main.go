@@ -17,7 +17,7 @@ const (
 
 	// Paths
 	googleKeyJsonPath = "/tmp/google-key.json"
-	kubeFilePath = "/tmp/gen-kube.yml"
+	kubeFilePath = "/tmp/genereated-kube"
 )
 
 // Plugin type
@@ -41,8 +41,9 @@ type (
 
 	// Drone Values
 	Drone struct {
-		Tag  string
-		Name string
+		Tag         string
+		Name        string
+		BuildNumber string
 	}
 
 	// Plugin execution params
@@ -55,13 +56,14 @@ type (
 
 	// Information used in the templates
 	TemplateInfos struct {
-		Name       string
-		Tag        string
-		Namespace  string
-		Cluster    string
-		Container  string
-		Image      string
-		Deployment string
+		Name        string
+		Tag         string
+		Namespace   string
+		Cluster     string
+		Container   string
+		Image       string
+		Deployment  string
+		BuildNumber string
 	}
 )
 
@@ -92,7 +94,7 @@ func (p *Plugin) Exec() error {
 	} else {
 		//
 		if p.ExecApplyKubernetes() != nil {
-			return fmt.Errorf("[ERROR] Could apply changes to the files")
+			return fmt.Errorf("[ERROR] Could not apply changes to the files")
 		}
 	}
 

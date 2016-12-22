@@ -28,7 +28,7 @@ func commandSetKubernetesContext(cluster, namespace string) *exec.Cmd {
 
 // Apply the file changes (or creation) to Kubernetes
 func commandKubernetesApply(file string) *exec.Cmd {
-	return exec.Command(kubectlCmd, "apply", "--filename", file)
+	return exec.Command(kubectlCmd, "apply", "-f", file)
 }
 
 // Update the deployment image
