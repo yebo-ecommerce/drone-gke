@@ -86,7 +86,7 @@ func main() {
 		cli.StringFlag{
 			Name:   "drone.tag",
 			Usage:  "Commit Tag",
-			EnvVar: "DRONE_TAG",
+			EnvVar: "DRONE_TAG,PLUGIN_TAG",
 			Value:  "latest",
 		},
 		cli.StringFlag{
